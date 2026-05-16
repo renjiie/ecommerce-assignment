@@ -4,7 +4,7 @@ FastAPI backend for the order-processing assignment. The code follows a feature-
 
 ## Architecture
 
-See the full system architecture, diagrams, request flows, scalability notes, caching details, concurrency model, Clerk auth implementation, and load-testing plan in [`../architecture.md`](../architecture.md).
+See the full system architecture, diagrams, request flows, scalability notes, caching details, concurrency model, Clerk auth implementation, and load-testing plan in [`./architecture.md`](./architecture.md).
 
 ## Layout
 
