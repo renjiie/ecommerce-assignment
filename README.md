@@ -1,10 +1,12 @@
-# E-Commerce Order Processing Backend
+# E-Commerce Order Processing System
 
-FastAPI backend for the order-processing assignment. The code follows a feature-based modular architecture with PostgreSQL, SQLAlchemy 2.0, Alembic, Clerk SDK request authentication, and Celery + Redis for scheduled order processing.
+Order-processing assignment with a FastAPI backend and React/Vite frontend. The backend follows a
+feature-based modular architecture with PostgreSQL, SQLAlchemy 2.0, Alembic, Clerk SDK request
+authentication, and Celery + Redis for local scheduled processing demos.
 
 ## Architecture
 
-See the full system architecture, diagrams, request flows, scalability notes, caching details, concurrency model, Clerk auth implementation, and load-testing plan in [`./architecture.md`](./architecture.md).
+See the concise current architecture in [`./architecture.md`](./architecture.md).
 
 ## Layout
 
@@ -42,6 +44,23 @@ For Clerk request authentication, the backend uses Clerk's official Python SDK. 
 `CLERK_SECRET_KEY` to let Clerk's SDK fetch and cache JWKS from the Backend API. Production should
 also set `CLERK_AUTHORIZED_PARTIES` to the allowed frontend origins.
 
+## Expected Behavior: Dev vs Production
+
+| Area | Local/dev | Current production deployment |
+| --- | --- | --- |
+| Frontend | Vite dev server or local build | Vercel static deployment |
+| Backend | FastAPI through local Python or Docker Compose | Render free web service |
+| Database | Local PostgreSQL through Docker Compose or SQLite in tests | Render free PostgreSQL |
+| Auth | Dev bypass or Clerk | Clerk only |
+| Role switching | Reviewer role switch can be enabled | Disabled; role must come from Clerk session token claims |
+| Background processing | Celery beat + Redis promote `PENDING` orders every 5 minutes | Not running, to stay within free Render services |
+| Pending orders | Auto-promoted to `PROCESSING` when local Celery is running | Stay `PENDING` until an admin manually updates status |
+
+The assignment requirement for a 5-minute background job is implemented and test-covered in the
+local/dev setup through Celery and Redis. The hosted free production demo intentionally omits Redis,
+Celery worker, Celery beat, and cron/scheduler services because those are paid or not available in
+the selected free deployment path.
+
 ## Run With Docker Compose
 
 ```bash
@@ -51,6 +70,9 @@ docker compose up -d postgres redis
 docker compose run --rm api alembic upgrade head
 docker compose up --build
 ```
+
+Docker Compose starts the API, PostgreSQL, Redis, Celery worker, and Celery beat. With this setup,
+pending orders are automatically moved to `PROCESSING` every 5 minutes.
 
 ## API Documentation
 
@@ -87,5 +109,9 @@ Docker verification requires Docker to be installed locally.
 Use Vercel for the static Vite frontend and Render for the FastAPI backend plus Postgres. The
 production Render setup intentionally does not run Redis, Celery worker, Celery beat, or a scheduler;
 Celery remains available for local development demos.
+
+Because Render free web services cannot run the paid worker/cron pieces, production order processing
+is manual after creation: customers create `PENDING` orders, and admins use the UI to move them
+through `PROCESSING`, `SHIPPED`, and `DELIVERED`.
 
 See the exact deployment runbook in [`./DEPLOYMENT.md`](./DEPLOYMENT.md).
