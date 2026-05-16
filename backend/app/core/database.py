@@ -19,8 +19,14 @@ class Base(DeclarativeBase):
     metadata = MetaData(naming_convention=convention)
 
 
+def async_database_url(url: str) -> str:
+    if url.startswith("postgresql://"):
+        return url.replace("postgresql://", "postgresql+asyncpg://", 1)
+    return url
+
+
 engine = create_async_engine(
-    settings.DATABASE_URL,
+    async_database_url(settings.DATABASE_URL),
     echo=settings.DEBUG,
     pool_pre_ping=True,
 )
@@ -35,4 +41,3 @@ AsyncSessionLocal = async_sessionmaker(
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
     async with AsyncSessionLocal() as session:
         yield session
-
