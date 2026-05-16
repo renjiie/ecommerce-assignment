@@ -52,7 +52,13 @@ docker compose run --rm api alembic upgrade head
 docker compose up --build
 ```
 
-API docs are available at `http://localhost:8000/docs`; health check is `GET /health`.
+## API Documentation
+
+Once the backend is running, you can access the interactive API documentation at:
+
+- **Swagger UI**: [http://localhost:8000/docs](http://localhost:8000/docs)
+- **ReDoc**: [http://localhost:8000/redoc](http://localhost:8000/redoc)
+- **Health Check**: [http://localhost:8000/health](http://localhost:8000/health)
 
 ## Main Endpoints
 

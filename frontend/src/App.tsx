@@ -21,7 +21,6 @@ import {
   ShoppingBag,
   UserRound,
   SlidersHorizontal,
-  Sparkles,
   Truck,
   X,
   XCircle,
@@ -139,10 +138,6 @@ function AppShell() {
           <section className="mt-6">
             <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
               <div>
-                <div className="inline-flex items-center gap-2 rounded-full border border-line bg-panel px-3 py-1 text-xs font-medium text-muted shadow-soft">
-                  <Sparkles size={14} />
-                  Production order flow
-                </div>
                 <h1 className="mt-4 text-3xl font-semibold tracking-tight text-text sm:text-4xl">
                   Order Operations
                 </h1>
