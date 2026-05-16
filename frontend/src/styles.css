@@ -1,0 +1,184 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --color-bg: 246 248 251;
+  --color-panel: 255 255 255;
+  --color-raised: 249 251 253;
+  --color-text: 17 24 39;
+  --color-muted: 100 116 139;
+  --color-line: 226 232 240;
+  --color-brand: 14 116 144;
+  --color-success: 22 163 74;
+  --color-warning: 217 119 6;
+  --color-danger: 220 38 38;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --shadow-soft: 0 1px 2px rgba(15, 23, 42, 0.06), 0 10px 30px rgba(15, 23, 42, 0.04);
+  --shadow-lift: 0 18px 55px rgba(15, 23, 42, 0.16);
+  --focus-ring: 0 0 0 3px rgba(14, 116, 144, 0.16);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: 0;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+@layer components {
+  .panel {
+    @apply rounded-token border border-line bg-panel shadow-soft;
+  }
+
+  .btn {
+    @apply inline-flex h-10 items-center gap-2 rounded-token px-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-primary {
+    @apply bg-text text-white hover:bg-slate-700;
+  }
+
+  .btn-secondary {
+    @apply border border-line bg-panel text-text hover:bg-raised;
+  }
+
+  .btn-danger {
+    @apply border border-danger/20 bg-danger/10 text-danger hover:bg-danger/15;
+  }
+
+  .icon-btn {
+    @apply inline-grid h-8 w-8 place-items-center rounded-token border border-line bg-panel text-muted transition hover:text-text;
+  }
+
+  .nav-item {
+    @apply flex h-10 w-full items-center gap-3 rounded-token px-3 text-sm font-medium text-muted transition hover:bg-raised hover:text-text;
+  }
+
+  .nav-item-active {
+    @apply bg-raised text-text shadow-soft;
+  }
+
+  .segmented {
+    @apply inline-flex rounded-token border border-line bg-raised p-1;
+  }
+
+  .segment {
+    @apply h-8 rounded-[6px] px-3 text-xs font-semibold text-muted transition;
+  }
+
+  .segment-active {
+    @apply bg-panel text-text shadow-soft;
+  }
+
+  .field-shell {
+    @apply flex h-10 items-center gap-2 rounded-token border border-line bg-raised px-3;
+  }
+
+  .field-input {
+    @apply min-w-0 flex-1 bg-transparent text-sm text-text placeholder:text-muted;
+  }
+
+  .metric-card {
+    @apply flex items-center gap-4 rounded-token border border-line bg-panel p-4 shadow-soft;
+  }
+
+  .metric-icon {
+    @apply grid h-11 w-11 place-items-center rounded-token bg-raised text-muted;
+  }
+
+  .metric-pending {
+    @apply bg-warning/10 text-warning;
+  }
+
+  .metric-processing {
+    @apply bg-brand/10 text-brand;
+  }
+
+  .metric-money {
+    @apply bg-success/10 text-success;
+  }
+
+  .table-row {
+    @apply cursor-default transition hover:bg-raised/70;
+  }
+
+  .table-row-active {
+    @apply bg-brand/5;
+  }
+
+  .status-badge {
+    @apply inline-flex h-7 items-center gap-1.5 rounded-full border px-2.5 text-xs font-semibold;
+  }
+
+  .status-pending {
+    @apply border-warning/25 bg-warning/10 text-[rgb(146,64,14)];
+  }
+
+  .status-processing {
+    @apply border-brand/25 bg-brand/10 text-brand;
+  }
+
+  .status-shipped {
+    @apply border-sky-500/25 bg-sky-500/10 text-sky-700;
+  }
+
+  .status-delivered {
+    @apply border-success/25 bg-success/10 text-success;
+  }
+
+  .status-cancelled {
+    @apply border-danger/25 bg-danger/10 text-danger;
+  }
+
+  .section-label {
+    @apply text-xs font-bold uppercase tracking-[0.14em] text-muted;
+  }
+
+  .line-item {
+    @apply flex items-center justify-between rounded-token border border-line bg-raised p-3;
+  }
+
+  .timeline-item {
+    @apply relative flex gap-3 pl-1;
+  }
+
+  .timeline-dot {
+    @apply mt-1.5 h-2.5 w-2.5 rounded-full bg-brand;
+  }
+
+  .form-label {
+    @apply grid gap-1.5 text-xs font-semibold text-muted;
+  }
+
+  .form-input {
+    @apply h-10 rounded-token border border-line bg-panel px-3 text-sm font-medium text-text;
+  }
+
+  .form-error {
+    @apply text-xs font-medium text-danger;
+  }
+}
+
