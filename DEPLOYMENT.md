@@ -97,9 +97,15 @@ VITE_API_BASE_URL=https://ecommerce-orders-api.onrender.com
 VITE_AUTH_BYPASS=false
 VITE_CLERK_PUBLISHABLE_KEY=<Clerk production publishable key>
 VITE_REVIEWER_ROLE_SWITCH=false
+VITE_N8N_CHAT_WEBHOOK_URL=<n8n production chat webhook URL>
 ```
 
 4. Deploy.
+
+If the n8n assistant is enabled, add the Vercel production URL to the n8n Chat
+Trigger/Webhook CORS or Allowed Origins setting.
+For clean responses, configure the n8n agent/system prompt to return concise GitHub Markdown with
+short headings and bullets instead of indented plain text.
 
 ## 5. Lock Production Origins
 

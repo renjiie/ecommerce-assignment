@@ -8,6 +8,12 @@ authentication, and Celery + Redis for local scheduled processing demos.
 
 See the concise current architecture in [`./architecture.md`](./architecture.md).
 
+## n8n Assistant Widget
+
+The frontend can show a minimizable n8n chat assistant when
+`VITE_N8N_CHAT_WEBHOOK_URL` is set. The n8n Chat Trigger/Webhook must allow the
+frontend origin, such as the Vercel production URL, in its CORS/Allowed Origins settings.
+
 ## Layout
 
 ```text

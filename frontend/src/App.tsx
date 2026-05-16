@@ -33,6 +33,7 @@ import { cancelOrder, configureApiAuth, createOrder, fetchOrders, updateOrderSta
 import { ClerkUserControl } from "./auth/AuthProvider";
 import { useOrderAuth } from "./auth/authContext";
 import { demoOrders } from "./data/demoOrders";
+import { N8nAssistantChat } from "./integrations/N8nAssistantChat";
 import {
   calculateOrderMetrics,
   formatCurrency,
@@ -239,6 +240,7 @@ function AppShell() {
         onClose={() => setCreateOpen(false)}
         onCreated={() => ordersQuery.refetch()}
       />
+      <N8nAssistantChat auth={auth} />
     </div>
   );
 }
