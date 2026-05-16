@@ -28,15 +28,15 @@ class Order(Base):
     __tablename__ = "orders"
     __table_args__ = (
         Index("ix_orders_customer_status_created", "customer_id", "status", "created_at"),
+        Index("ix_orders_status_created", "status", "created_at"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    customer_id: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
+    customer_id: Mapped[str] = mapped_column(String(255), nullable=False)
     status: Mapped[OrderStatus] = mapped_column(
         order_status_enum,
         nullable=False,
         default=OrderStatus.PENDING,
-        index=True,
     )
     total_amount: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
     created_at: Mapped[datetime] = mapped_column(
@@ -74,7 +74,7 @@ class OrderItem(Base):
         nullable=False,
         index=True,
     )
-    product_id: Mapped[uuid.UUID] = mapped_column(Uuid(as_uuid=True), nullable=False, index=True)
+    product_id: Mapped[uuid.UUID] = mapped_column(Uuid(as_uuid=True), nullable=False)
     quantity: Mapped[int] = mapped_column(Integer, nullable=False)
     unit_price: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
 

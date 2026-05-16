@@ -38,12 +38,16 @@ def upgrade() -> None:
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False),
         sa.PrimaryKeyConstraint("id", name=op.f("pk_orders")),
     )
-    op.create_index(op.f("ix_orders_customer_id"), "orders", ["customer_id"], unique=False)
-    op.create_index(op.f("ix_orders_status"), "orders", ["status"], unique=False)
     op.create_index(
         "ix_orders_customer_status_created",
         "orders",
         ["customer_id", "status", "created_at"],
+        unique=False,
+    )
+    op.create_index(
+        "ix_orders_status_created",
+        "orders",
+        ["status", "created_at"],
         unique=False,
     )
 
@@ -63,7 +67,6 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id", name=op.f("pk_order_items")),
     )
     op.create_index(op.f("ix_order_items_order_id"), "order_items", ["order_id"], unique=False)
-    op.create_index(op.f("ix_order_items_product_id"), "order_items", ["product_id"], unique=False)
 
     op.create_table(
         "order_status_history",
@@ -91,11 +94,8 @@ def upgrade() -> None:
 def downgrade() -> None:
     op.drop_index(op.f("ix_order_status_history_order_id"), table_name="order_status_history")
     op.drop_table("order_status_history")
-    op.drop_index(op.f("ix_order_items_product_id"), table_name="order_items")
     op.drop_index(op.f("ix_order_items_order_id"), table_name="order_items")
     op.drop_table("order_items")
+    op.drop_index("ix_orders_status_created", table_name="orders")
     op.drop_index("ix_orders_customer_status_created", table_name="orders")
-    op.drop_index(op.f("ix_orders_status"), table_name="orders")
-    op.drop_index(op.f("ix_orders_customer_id"), table_name="orders")
     op.drop_table("orders")
-
