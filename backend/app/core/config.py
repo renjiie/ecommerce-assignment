@@ -1,7 +1,7 @@
 from functools import lru_cache
-from typing import Literal
+from typing import Literal, Self
 
-from pydantic import AnyHttpUrl, Field
+from pydantic import AnyHttpUrl, Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -35,6 +35,19 @@ class Settings(BaseSettings):
             "http://localhost:5174",
         ]
     )
+
+    @model_validator(mode="after")
+    def validate_production_settings(self) -> Self:
+        if self.ENV != "production":
+            return self
+
+        if self.AUTH_BYPASS:
+            raise ValueError("AUTH_BYPASS must be disabled in production")
+
+        if not (self.CLERK_JWT_KEY or self.CLERK_SECRET_KEY):
+            raise ValueError("Production requires CLERK_JWT_KEY or CLERK_SECRET_KEY")
+
+        return self
 
 
 @lru_cache(maxsize=1)

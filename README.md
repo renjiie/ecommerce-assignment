@@ -75,3 +75,28 @@ DATABASE_URL=sqlite+aiosqlite:///./local_alembic_check.db uv run --extra dev ale
 ```
 
 Docker verification requires Docker to be installed locally.
+
+## Production Deployment
+
+The frontend is a static Vite app and is a good fit for Vercel. Configure the Vercel project with:
+
+- Root Directory: `frontend`
+- Install Command: `npm ci`
+- Build Command: `npm run build`
+- Output Directory: `dist`
+- Environment: `VITE_API_BASE_URL`, `VITE_AUTH_BYPASS=false`, `VITE_CLERK_PUBLISHABLE_KEY`
+
+The FastAPI backend can run on Vercel Functions, but this app also needs PostgreSQL, Redis, and a
+Celery worker/beat process. Vercel is therefore best used for the frontend only unless the worker is
+replaced with a Vercel Cron-triggered endpoint and managed external Redis/Postgres services.
+
+Recommended production split:
+
+- Deploy `frontend/` to Vercel.
+- Deploy `backend/` as a container on a service with long-running worker support.
+- Run PostgreSQL and Redis as managed services.
+- Set backend `ENV=production`, `AUTH_BYPASS=false`, one of `CLERK_JWT_KEY` or `CLERK_SECRET_KEY`,
+  `CLERK_AUTHORIZED_PARTIES`, and production `CORS_ORIGINS`.
+
+The backend settings fail fast if production is started with auth bypass enabled or without a Clerk
+verification key.

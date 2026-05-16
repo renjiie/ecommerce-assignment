@@ -4,6 +4,7 @@ import type {
   Order,
   OrderListResponse,
   OrderStatus,
+  ApiErrorEnvelope,
 } from "../types";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
@@ -14,7 +15,7 @@ type ApiAuthState = Pick<
 >;
 
 let apiAuthState: ApiAuthState = {
-  authBypass: import.meta.env.VITE_AUTH_BYPASS !== "false",
+  authBypass: import.meta.env.DEV && import.meta.env.VITE_AUTH_BYPASS !== "false",
   reviewerRoleSwitchEnabled: false,
   role: "CUSTOMER",
   userId: "dev-user",
@@ -39,9 +40,6 @@ async function authHeaders(): Promise<Record<string, string>> {
   const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
   if (apiAuthState.reviewerRoleSwitchEnabled) {
     headers["X-Reviewer-Role"] = apiAuthState.role;
-    headers["X-Dev-Role"] = apiAuthState.role;
-    headers["X-Dev-User-Id"] = apiAuthState.userId;
-    headers["X-Dev-Email"] = apiAuthState.userLabel;
   }
   return headers;
 }
@@ -59,11 +57,32 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
   if (!response.ok) {
     const body = await response.json().catch(() => undefined);
-    const message = body?.error?.message ?? `Request failed with ${response.status}`;
-    throw new Error(message);
+    throw new Error(errorMessageFromBody(body, response.status));
   }
 
   return response.json() as Promise<T>;
+}
+
+function errorMessageFromBody(body: unknown, status: number): string {
+  if (!body || typeof body !== "object") {
+    return `Request failed with ${status}`;
+  }
+
+  const envelope = body as ApiErrorEnvelope;
+  if (envelope.error?.message) {
+    return envelope.error.message;
+  }
+
+  const detail = (body as { detail?: unknown }).detail;
+  if (typeof detail === "string") {
+    return detail;
+  }
+
+  if (Array.isArray(detail)) {
+    return "Request validation failed";
+  }
+
+  return `Request failed with ${status}`;
 }
 
 export async function fetchOrders(status?: OrderStatus): Promise<OrderListResponse> {

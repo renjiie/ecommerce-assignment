@@ -12,7 +12,7 @@ import { type ReactNode, useMemo, useState } from "react";
 import type { AuthContextValue, UserRole } from "../types";
 import { AuthContext } from "./authContext";
 
-const authBypass = import.meta.env.VITE_AUTH_BYPASS !== "false";
+const authBypass = import.meta.env.DEV && import.meta.env.VITE_AUTH_BYPASS !== "false";
 const clerkPublishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 const reviewerRoleSwitchEnabled =
   import.meta.env.MODE !== "production" && import.meta.env.VITE_REVIEWER_ROLE_SWITCH !== "false";

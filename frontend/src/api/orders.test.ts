@@ -86,11 +86,25 @@ describe("orders API auth", () => {
         headers: expect.objectContaining({
           Authorization: "Bearer clerk-token",
           "X-Reviewer-Role": "ADMIN",
-          "X-Dev-Role": "ADMIN",
-          "X-Dev-User-Id": "user_123",
-          "X-Dev-Email": "reviewer@example.com",
         }),
       }),
     );
+    const headers = fetchMock.mock.calls[0][1]?.headers;
+    expect(headers).not.toHaveProperty("X-Dev-Role");
+    expect(headers).not.toHaveProperty("X-Dev-User-Id");
+    expect(headers).not.toHaveProperty("X-Dev-Email");
+  });
+
+  it("surfaces FastAPI detail errors when the standard envelope is absent", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 403,
+        json: async () => ({ detail: "Forbidden" }),
+      }),
+    );
+
+    await expect(fetchOrders()).rejects.toThrow("Forbidden");
   });
 });
