@@ -84,7 +84,8 @@ Docker verification requires Docker to be installed locally.
 
 ## Production Deployment
 
-Use Vercel for the static Vite frontend and Render for the FastAPI/Celery backend stack. The
-repository includes `frontend/vercel.json` and `render.yaml` for those targets.
+Use Vercel for the static Vite frontend and Render for the FastAPI backend plus Postgres. The
+production Render setup intentionally does not run Redis, Celery worker, Celery beat, or a scheduler;
+Celery remains available for local development demos.
 
 See the exact deployment runbook in [`./DEPLOYMENT.md`](./DEPLOYMENT.md).

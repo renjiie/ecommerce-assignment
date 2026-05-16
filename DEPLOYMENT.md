@@ -1,6 +1,14 @@
 # Production Deployment
 
-Deploy the React/Vite frontend to Vercel and the FastAPI/Celery backend stack to Render.
+Deploy the React/Vite frontend to Vercel and the FastAPI backend to Render's free-capable
+services. Production does not run Redis, Celery worker, Celery beat, or a scheduler. Orders created
+in production remain `PENDING` until an admin manually updates them from the UI.
+
+Render free-tier caveats:
+
+- Free web services spin down after idle time and cold start on the next request.
+- Free Render Postgres databases expire after 30 days.
+- This setup is for assignment review/demo use, not a durable production system.
 
 ## 1. Preflight
 
@@ -53,25 +61,23 @@ In Render:
 3. Select `render.yaml`.
 4. Review the planned resources:
    - `ecommerce-orders-db`
-   - `ecommerce-orders-redis`
    - `ecommerce-orders-api`
-   - `ecommerce-orders-worker`
-   - `ecommerce-orders-beat`
-5. Set prompted environment values:
+5. Confirm there are no Redis, worker, beat, or cron services.
+6. Set prompted environment values:
    - `CLERK_SECRET_KEY`
    - `CORS_ORIGINS`
    - `CLERK_AUTHORIZED_PARTIES`
 
-Before the frontend URL exists, use the expected Vercel production URL if known. Otherwise deploy once,
-then update these two values after Vercel deployment:
+Before the frontend URL exists, use the expected Vercel production URL if known. Otherwise deploy
+once, then update these two values after Vercel deployment:
 
 ```text
 CORS_ORIGINS=["https://<your-vercel-project>.vercel.app"]
 CLERK_AUTHORIZED_PARTIES=["https://<your-vercel-project>.vercel.app"]
 ```
 
-Render will inject `DATABASE_URL` from Postgres and `REDIS_URL` from Key Value. The backend accepts
-Render's native `postgresql://` URL and converts it to SQLAlchemy's asyncpg driver internally.
+Render injects `DATABASE_URL` from Postgres. The backend accepts Render's native `postgresql://`
+URL and converts it to SQLAlchemy's asyncpg driver internally.
 
 ## 4. Vercel Frontend
 
@@ -97,8 +103,7 @@ VITE_REVIEWER_ROLE_SWITCH=false
 
 ## 5. Lock Production Origins
 
-After the Vercel URL is final, update the Render `ecommerce-orders-api`,
-`ecommerce-orders-worker`, and `ecommerce-orders-beat` environments:
+After the Vercel URL is final, update the Render `ecommerce-orders-api` environment:
 
 ```text
 CORS_ORIGINS=["https://<your-vercel-project>.vercel.app"]
@@ -112,7 +117,7 @@ CORS_ORIGINS=["https://<your-domain.com>","https://<your-vercel-project>.vercel.
 CLERK_AUTHORIZED_PARTIES=["https://<your-domain.com>","https://<your-vercel-project>.vercel.app"]
 ```
 
-Redeploy or restart all three backend services after changing environment values.
+Redeploy or restart the backend service after changing environment values.
 
 ## 6. Production Smoke Test
 
@@ -125,6 +130,7 @@ Redeploy or restart all three backend services after changing environment values
 
 3. Open the Vercel frontend.
 4. Sign in as a `CUSTOMER` and create an order.
-5. Wait up to five minutes and confirm the worker moves pending orders to processing.
-6. Sign in as an `ADMIN` and confirm order listing and status updates work.
-7. Check Render logs for migration, database, Redis, CORS, and Clerk auth errors.
+5. Confirm the order remains `PENDING`.
+6. Sign in as an `ADMIN` and manually move the order to `PROCESSING`, `SHIPPED`, and `DELIVERED`.
+7. Confirm Render has no Redis, worker, beat, or cron services.
+8. Check Render logs for migration, database, CORS, and Clerk auth errors.
